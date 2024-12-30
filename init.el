@@ -5,16 +5,75 @@
 ;;; cosmetics
 (setq inhibit-startup-message t)
 
-;;; Package manager
-(require 'package)
-(setq package-enable-at-startup nil)
-(package-initialize)
+;;; straight.el package manager
+(defvar bootstrap-version)
+(let ((bootstrap-file
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
+  (unless (file-exists-p bootstrap-file)
+    (with-current-buffer
+        (url-retrieve-synchronously
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
+         'silent 'inhibit-cookies)
+      (goto-char (point-max))
+      (eval-print-last-sexp)))
+  (load bootstrap-file nil 'nomessage))
+(straight-use-package 'use-package)
+(setq straight-use-package-by-default t)
 
-;;; Bootstrap `use-package'
-(unless (package-installed-p 'use-package)
-(package-refresh-contents)
-(package-install 'use-package))
+;;; Completion frameworks
+;; Enable vertico
+(use-package vertico
+  ;; :custom
+  ;; (vertico-scroll-margin 0) ;; Different scroll margin
+  ;; (vertico-count 20) ;; Show more candidates
+  ;; (vertico-resize t) ;; Grow and shrink the Vertico minibuffer
+  ;; (vertico-cycle t) ;; Enable cycling for `vertico-next/previous'
+  :init
+  (vertico-mode))
 
+;; Persist history over Emacs restarts. Vertico sorts by history position.
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; A few more useful configurations...
+(use-package emacs
+  :custom
+  ;; Support opening new minibuffers from inside existing minibuffers.
+  (enable-recursive-minibuffers t)
+  ;; Hide commands in M-x which do not work in the current mode.  Vertico
+  ;; commands are hidden in normal buffers. This setting is useful beyond
+  ;; Vertico.
+  (read-extended-command-predicate #'command-completion-default-include-p)
+  :init
+  ;; Add prompt indicator to `completing-read-multiple'.
+  ;; We display [CRM<separator>], e.g., [CRM,] if the separator is a comma.
+  (defun crm-indicator (args)
+    (cons (format "[CRM%s] %s"
+                  (replace-regexp-in-string
+                   "\\`\\[.*?]\\*\\|\\[.*?]\\*\\'" ""
+                   crm-separator)
+                  (car args))
+          (cdr args)))
+  (advice-add #'completing-read-multiple :filter-args #'crm-indicator)
+
+  ;; Do not allow the cursor in the minibuffer prompt
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
+  (add-hook 'minibuffer-setup-hook #'cursor-intangible-mode))
+;; Optionally use the `orderless' completion style.
+(use-package orderless
+  :custom
+  ;; Configure a custom style dispatcher (see the Consult wiki)
+  ;; (orderless-style-dispatchers '(+orderless-consult-dispatch orderless-affix-dispatch))
+  ;; (orderless-component-separator #'orderless-escapable-split-on-space)
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides '((file (styles partial-completion)))))
 ;;; Text mode and Auto Fill mode
 ;; The next two lines put Emacs into Text mode
 ;; and Auto Fill mode, and are for writers who
@@ -31,3 +90,4 @@
 (global-set-key (kbd "C-c l") #'org-store-link)
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
+(setq-default org-agenda-files '("~/Nextcloud/org/agenda/"))
