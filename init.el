@@ -103,6 +103,3 @@
 (use-package which-key
   :config
   (which-key-mode))
-(use-package hungry-delete
-  :config
-  (global-hungry-delete-mode))
