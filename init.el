@@ -2,8 +2,6 @@
 ;;; Sizhao (Kevin) Lu
 ;;; 2024-12-27
 
-;;; cosmetics
-(setq inhibit-startup-message t)
 
 ;;; straight.el package manager
 (defvar bootstrap-version)
@@ -91,3 +89,20 @@
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
 (setq-default org-agenda-files '("~/Nextcloud/org/agenda/"))
+
+;;; cosmetics
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p)
+
+;;; Theme
+(use-package modus-themes)
+(load-theme 'modus-vivendi t)
+
+;;; accessibility
+(use-package which-key
+  :config
+  (which-key-mode))
+(use-package hungry-delete
+  :config
+  (global-hungry-delete-mode))
