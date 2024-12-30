@@ -97,7 +97,7 @@
 
 ;;; Theme
 (use-package modus-themes)
-(load-theme 'modus-vivendi t)
+(load-theme 'modus-vivendi-tinted t)
 
 ;;; accessibility
 (use-package which-key
