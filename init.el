@@ -88,7 +88,14 @@
 (global-set-key (kbd "C-c l") #'org-store-link)
 (global-set-key (kbd "C-c a") #'org-agenda)
 (global-set-key (kbd "C-c c") #'org-capture)
+;; agenda directory
 (setq-default org-agenda-files '("~/Nextcloud/org/agenda/"))
+;; Capture templates
+(setq org-capture-templates
+      '(("t" "Todo" entry (file+headline "~/Nextcloud/org/agenda/gtd.org" "Tasks")
+	 "* TODO %?\n %i\n %a")
+	("j" "Journal" entry (file+datetree "~/Nextcloud/org/notes/journal.org")
+	 "* %?\nEntered on %U\n %i\n %a")))
 
 ;;; cosmetics
 (setq inhibit-startup-message t)
@@ -99,7 +106,7 @@
 (use-package modus-themes)
 (load-theme 'modus-vivendi-tinted t)
 
-;;; accessibility
+;;; Quality of life
 (use-package which-key
   :config
   (which-key-mode))
