@@ -95,7 +95,7 @@
       '(("t" "Todo" entry (file+headline "~/Nextcloud/org/agenda/gtd.org" "Tasks")
 	 "* TODO %?\n %i\n %a")
 	("j" "Journal" entry (file+datetree "~/Nextcloud/org/notes/journal.org")
-	 "* %?\nEntered on %U\n %i\n %a")))
+	 "* %i %?\nEntered on %U\n%a")))
 
 ;;; cosmetics
 (setq inhibit-startup-message t)
